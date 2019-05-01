@@ -55,20 +55,14 @@
 - (void)handleMethodCall:(FlutterMethodCall *)call
                   result:(FlutterResult)result {
   if ([@"loginWithReadPermissions" isEqualToString:call.method]) {
-    FBSDKLoginBehavior behavior =
-        [self loginBehaviorFromString:call.arguments[@"behavior"]];
     NSArray *permissions = call.arguments[@"permissions"];
 
-    [self loginWithReadPermissions:behavior
-                       permissions:permissions
+    [self loginWithReadPermissions:permissions
                             result:result];
   } else if ([@"loginWithPublishPermissions" isEqualToString:call.method]) {
-    FBSDKLoginBehavior behavior =
-        [self loginBehaviorFromString:call.arguments[@"behavior"]];
     NSArray *permissions = call.arguments[@"permissions"];
 
-    [self loginWithPublishPermissions:behavior
-                          permissions:permissions
+    [self loginWithPublishPermissions:permissions
                                result:result];
   } else if ([@"logOut" isEqualToString:call.method]) {
     [self logOut:result];
@@ -79,28 +73,8 @@
   }
 }
 
-- (FBSDKLoginBehavior)loginBehaviorFromString:(NSString *)loginBehaviorStr {
-  if ([@[ @"nativeWithFallback", @"nativeOnly" ]
-          containsObject:loginBehaviorStr]) {
-    return FBSDKLoginBehaviorNative;
-  } else if ([@"webOnly" isEqualToString:loginBehaviorStr]) {
-    return FBSDKLoginBehaviorBrowser;
-  } else if ([@"webViewOnly" isEqualToString:loginBehaviorStr]) {
-    return FBSDKLoginBehaviorWeb;
-  } else {
-    NSString *message = [NSString
-        stringWithFormat:@"Unknown login behavior: %@", loginBehaviorStr];
-
-    @throw [NSException exceptionWithName:@"InvalidLoginBehaviorException"
-                                   reason:message
-                                 userInfo:nil];
-  }
-}
-
-- (void)loginWithReadPermissions:(FBSDKLoginBehavior)behavior
-                     permissions:(NSArray *)permissions
+- (void)loginWithReadPermissions:(NSArray *)permissions
                           result:(FlutterResult)result {
-  [loginManager setLoginBehavior:behavior];
   [loginManager
       logInWithReadPermissions:permissions
             fromViewController:nil
@@ -112,10 +86,8 @@
                        }];
 }
 
-- (void)loginWithPublishPermissions:(FBSDKLoginBehavior)behavior
-                        permissions:(NSArray *)permissions
+- (void)loginWithPublishPermissions:(NSArray *)permissions
                              result:(FlutterResult)result {
-  [loginManager setLoginBehavior:behavior];
   [loginManager
       logInWithPublishPermissions:permissions
                fromViewController:nil
