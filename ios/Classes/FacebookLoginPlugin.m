@@ -55,16 +55,14 @@
 - (void)handleMethodCall:(FlutterMethodCall *)call
                   result:(FlutterResult)result {
   if ([@"loginWithReadPermissions" isEqualToString:call.method]) {
-    FBSDKLoginBehavior behavior =
-        [self loginBehaviorFromString:call.arguments[@"behavior"]];
+    FBSDKLoginBehavior behavior = FBSDKLoginBehaviorBrowser;
     NSArray *permissions = call.arguments[@"permissions"];
 
     [self loginWithReadPermissions:behavior
                        permissions:permissions
                             result:result];
   } else if ([@"loginWithPublishPermissions" isEqualToString:call.method]) {
-    FBSDKLoginBehavior behavior =
-        [self loginBehaviorFromString:call.arguments[@"behavior"]];
+    FBSDKLoginBehavior behavior = FBSDKLoginBehaviorBrowser;
     NSArray *permissions = call.arguments[@"permissions"];
 
     [self loginWithPublishPermissions:behavior
@@ -76,24 +74,6 @@
     [self getCurrentAccessToken:result];
   } else {
     result(FlutterMethodNotImplemented);
-  }
-}
-
-- (FBSDKLoginBehavior)loginBehaviorFromString:(NSString *)loginBehaviorStr {
-  if ([@[ @"nativeWithFallback", @"nativeOnly" ]
-          containsObject:loginBehaviorStr]) {
-    return FBSDKLoginBehaviorNative;
-  } else if ([@"webOnly" isEqualToString:loginBehaviorStr]) {
-    return FBSDKLoginBehaviorBrowser;
-  } else if ([@"webViewOnly" isEqualToString:loginBehaviorStr]) {
-    return FBSDKLoginBehaviorWeb;
-  } else {
-    NSString *message = [NSString
-        stringWithFormat:@"Unknown login behavior: %@", loginBehaviorStr];
-
-    @throw [NSException exceptionWithName:@"InvalidLoginBehaviorException"
-                                   reason:message
-                                 userInfo:nil];
   }
 }
 
